@@ -11,6 +11,7 @@ using Aruco.Net;
 using Bonsai;
 using Bonsai.Aruco.Design;
 using Bonsai.Aruco;
+using System.Reactive.Linq;
 
 [assembly: TypeVisualizer(typeof(MarkerTrackerVisualizer), Target = typeof(MarkerTracker))]
 
@@ -61,7 +62,7 @@ namespace Bonsai.Aruco.Design
                 var inputNode = workflow.Predecessors(trackerNode).Select(node => node.Value as InspectBuilder).SingleOrDefault();
                 if (inputNode != null)
                 {
-                    inputObserver = inputNode.Output.Subscribe(output => input = output as IplImage);
+                    inputObserver = inputNode.Output.Merge().Subscribe(output => input = output as IplImage);
                 }
             }
 
