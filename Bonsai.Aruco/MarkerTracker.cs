@@ -7,29 +7,18 @@ using Bonsai;
 using Aruco.Net;
 using System.ComponentModel;
 using System.Xml.Serialization;
+using System.Reactive.Linq;
 
 namespace Bonsai.Aruco
 {
     public class MarkerTracker : Transform<IplImage, MarkerFrame>
     {
-        CvMat cameraMatrix;
-        CvMat distortion;
-        CameraParameters parameters;
-        MarkerDetector detector;
-
         public MarkerTracker()
         {
             Param1 = 7.0;
             Param2 = 7.0;
             ThresholdType = ThresholdMethod.AdaptiveThreshold;
             CornerRefinement = CornerRefinementMethod.Harris;
-        }
-
-        [XmlIgnore]
-        [Browsable(false)]
-        public CameraParameters Parameters
-        {
-            get { return parameters; }
         }
 
         [FileNameFilter("YML Files|*.yml;*.xml")]
@@ -46,39 +35,38 @@ namespace Bonsai.Aruco
 
         public float MarkerSize { get; set; }
 
-        public override MarkerFrame Process(IplImage input)
+        public override IObservable<MarkerFrame> Process(IObservable<IplImage> source)
         {
-            var hInput = input.DangerousGetHandle();
-            var hCamMatrix = cameraMatrix != null ? cameraMatrix.DangerousGetHandle() : IntPtr.Zero;
-            var hDistortion = distortion != null ? distortion.DangerousGetHandle() : IntPtr.Zero;
-            detector.ThresholdType = ThresholdType;
-            detector.Param1 = Param1;
-            detector.Param2 = Param2;
-            detector.CornerRefinement = CornerRefinement;
-
-            var detectedMarkers = detector.Detect(hInput, hCamMatrix, hDistortion, MarkerSize);
-            return new MarkerFrame(parameters, detectedMarkers);
-        }
-
-        public override IDisposable Load()
-        {
-            detector = new MarkerDetector();
-            if (!string.IsNullOrEmpty(CameraParameters))
+            return Observable.Defer(() =>
             {
-                parameters = new CameraParameters();
-                parameters.ReadFromXmlFile(CameraParameters);
+                Mat cameraMatrix = null;
+                Mat distortion = null;
+                CameraParameters parameters = null;
+                var detector = new MarkerDetector();
+                if (!string.IsNullOrEmpty(CameraParameters))
+                {
+                    parameters = new CameraParameters();
+                    parameters.ReadFromXmlFile(CameraParameters);
 
-                cameraMatrix = new CvMat(3, 3, CvMatDepth.CV_32F, 1);
-                distortion = new CvMat(1, 4, CvMatDepth.CV_32F, 1);
-                parameters.CopyParameters(cameraMatrix.DangerousGetHandle(), distortion.DangerousGetHandle());
-            }
-            return base.Load();
-        }
+                    cameraMatrix = new Mat(3, 3, Depth.F32, 1);
+                    distortion = new Mat(1, 4, Depth.F32, 1);
+                    parameters.CopyParameters(cameraMatrix.DangerousGetHandle(), distortion.DangerousGetHandle());
+                }
 
-        protected override void Unload()
-        {
-            detector.Dispose();
-            base.Unload();
+                return source.Select(input =>
+                {
+                    var hInput = input.DangerousGetHandle();
+                    var hCamMatrix = cameraMatrix != null ? cameraMatrix.DangerousGetHandle() : IntPtr.Zero;
+                    var hDistortion = distortion != null ? distortion.DangerousGetHandle() : IntPtr.Zero;
+                    detector.ThresholdType = ThresholdType;
+                    detector.Param1 = Param1;
+                    detector.Param2 = Param2;
+                    detector.CornerRefinement = CornerRefinement;
+
+                    var detectedMarkers = detector.Detect(hInput, hCamMatrix, hDistortion, MarkerSize);
+                    return new MarkerFrame(parameters, detectedMarkers);
+                }).Finally(detector.Dispose);
+            });
         }
     }
 }

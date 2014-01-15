@@ -20,7 +20,6 @@ namespace Bonsai.Aruco.Design
     public class MarkerTrackerVisualizer : IplImageVisualizer
     {
         IplImage input;
-        MarkerTracker tracker;
         IDisposable inputObserver;
 
         public override void Show(object value)
@@ -28,14 +27,14 @@ namespace Bonsai.Aruco.Design
             if (input != null)
             {
                 var markerFrame = (MarkerFrame)value;
-                var image = new IplImage(input.Size, 8, 3);
-                Core.cvCopy(input, image);
+                var image = new IplImage(input.Size, IplDepth.U8, 3);
+                CV.Copy(input, image);
                 foreach (var marker in markerFrame.DetectedMarkers)
                 {
                     marker.Draw(image.DangerousGetHandle(), 0, 0, 255, 2, true);
-                    if (tracker != null && tracker.Parameters != null)
+                    if (markerFrame.CameraParameters != null)
                     {
-                        CvDrawingUtils.Draw3dCube(image.DangerousGetHandle(), marker, tracker.Parameters);
+                        CvDrawingUtils.Draw3dCube(image.DangerousGetHandle(), marker, markerFrame.CameraParameters);
                     }
                 }
 
@@ -49,17 +48,8 @@ namespace Bonsai.Aruco.Design
             var context = (ITypeVisualizerContext)provider.GetService(typeof(ITypeVisualizerContext));
             if (context != null)
             {
-                var workflowNode = (from node in workflow
-                                    where node.Value == context.Source
-                                    select node).FirstOrDefault();
-                var trackerNode = workflow.Predecessors(workflowNode).Single();
-                var trackerBuilder = trackerNode.Value as SelectBuilder;
-                if (trackerBuilder != null)
-                {
-                    tracker = (MarkerTracker)trackerBuilder.Transform;
-                }
-
-                var inputNode = workflow.Predecessors(trackerNode).Select(node => node.Value as InspectBuilder).SingleOrDefault();
+                var workflowNode = workflow.First(node => node.Value == context.Source);
+                var inputNode = workflow.Predecessors(workflowNode).Select(node => node.Value as InspectBuilder).FirstOrDefault();
                 if (inputNode != null)
                 {
                     inputObserver = inputNode.Output.Merge().Subscribe(output => input = output as IplImage);
