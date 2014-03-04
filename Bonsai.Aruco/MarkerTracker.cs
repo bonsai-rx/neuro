@@ -17,8 +17,11 @@ namespace Bonsai.Aruco
         {
             Param1 = 7.0;
             Param2 = 7.0;
+            MinSize = 0.04f;
+            MaxSize = 0.5f;
             ThresholdType = ThresholdMethod.AdaptiveThreshold;
-            CornerRefinement = CornerRefinementMethod.Harris;
+            CornerRefinement = CornerRefinementMethod.Lines;
+            MarkerSize = 10;
         }
 
         [FileNameFilter("YML Files|*.yml;*.xml")]
@@ -30,6 +33,10 @@ namespace Bonsai.Aruco
         public double Param1 { get; set; }
 
         public double Param2 { get; set; }
+
+        public float MinSize { get; set; }
+
+        public float MaxSize { get; set; }
 
         public CornerRefinementMethod CornerRefinement { get; set; }
 
@@ -43,27 +50,31 @@ namespace Bonsai.Aruco
                 Mat distortion = null;
                 CameraParameters parameters = null;
                 var detector = new MarkerDetector();
-                if (!string.IsNullOrEmpty(CameraParameters))
+                if (string.IsNullOrEmpty(CameraParameters))
                 {
-                    parameters = new CameraParameters();
-                    parameters.ReadFromXmlFile(CameraParameters);
-
-                    cameraMatrix = new Mat(3, 3, Depth.F32, 1);
-                    distortion = new Mat(1, 4, Depth.F32, 1);
-                    parameters.CopyParameters(cameraMatrix.DangerousGetHandle(), distortion.DangerousGetHandle());
+                    throw new InvalidOperationException("No camera configuration file was specified.");
                 }
+
+                parameters = new CameraParameters();
+                parameters.ReadFromXmlFile(CameraParameters);
+
+                Size size;
+                cameraMatrix = new Mat(3, 3, Depth.F32, 1);
+                distortion = new Mat(1, 4, Depth.F32, 1);
+                parameters.CopyParameters(cameraMatrix, distortion, out size);
 
                 return source.Select(input =>
                 {
-                    var hInput = input.DangerousGetHandle();
-                    var hCamMatrix = cameraMatrix != null ? cameraMatrix.DangerousGetHandle() : IntPtr.Zero;
-                    var hDistortion = distortion != null ? distortion.DangerousGetHandle() : IntPtr.Zero;
-                    detector.ThresholdType = ThresholdType;
+                    var threshold = new IplImage(input.Size, IplDepth.U8, 1);
+                    detector.ThresholdMethod = ThresholdType;
                     detector.Param1 = Param1;
                     detector.Param2 = Param2;
+                    detector.MinSize = MinSize;
+                    detector.MaxSize = MaxSize;
                     detector.CornerRefinement = CornerRefinement;
+                    detector.CopyThresholdedImage(threshold);
 
-                    var detectedMarkers = detector.Detect(hInput, hCamMatrix, hDistortion, MarkerSize);
+                    var detectedMarkers = detector.Detect(input, cameraMatrix, distortion, MarkerSize);
                     return new MarkerFrame(parameters, detectedMarkers);
                 }).Finally(detector.Dispose);
             });

@@ -27,14 +27,13 @@ namespace Bonsai.Aruco.Design
             if (input != null)
             {
                 var markerFrame = (MarkerFrame)value;
-                var image = new IplImage(input.Size, IplDepth.U8, 3);
-                CV.Copy(input, image);
+                var image = input.Clone();
                 foreach (var marker in markerFrame.DetectedMarkers)
                 {
-                    marker.Draw(image.DangerousGetHandle(), 0, 0, 255, 2, true);
+                    marker.Draw(image, Scalar.Rgb(0, 0, 255), 2, true);
                     if (markerFrame.CameraParameters != null)
                     {
-                        CvDrawingUtils.Draw3dCube(image.DangerousGetHandle(), marker, markerFrame.CameraParameters);
+                        DrawingUtils.Draw3dCube(image, marker, markerFrame.CameraParameters);
                     }
                 }
 

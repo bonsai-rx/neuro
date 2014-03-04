@@ -8,7 +8,7 @@ namespace Bonsai.Aruco
 {
     public class MarkerFrame
     {
-        public MarkerFrame(CameraParameters cameraParameters, IEnumerable<Marker> detectedMarkers)
+        public MarkerFrame(CameraParameters cameraParameters, IList<Marker> detectedMarkers)
         {
             CameraParameters = cameraParameters;
             DetectedMarkers = detectedMarkers;
@@ -16,6 +16,6 @@ namespace Bonsai.Aruco
 
         public CameraParameters CameraParameters { get; private set; }
 
-        public IEnumerable<Marker> DetectedMarkers { get; private set; }
+        public IList<Marker> DetectedMarkers { get; private set; }
     }
 }
