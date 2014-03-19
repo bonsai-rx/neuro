@@ -42,6 +42,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\OpenCV.Net.3.2.2\lib\net40\OpenCV.Net.dll</HintPath>
     </Reference>
+    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\OpenTK.1.1.1508.5724\lib\NET40\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK.GLControl, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\OpenTK.GLControl.1.1.1508.5724\lib\NET40\OpenTK.GLControl.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Reactive.Core">
@@ -53,6 +61,7 @@
     <Reference Include="System.Reactive.Linq">
       <HintPath>..\packages\Rx-Linq.2.2.2\lib\net45\System.Reactive.Linq.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -60,7 +69,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MarkerTrackerVisualizer.cs" />
+    <Compile Include="DetectMarkersVisualizer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.Generated.cs" />
   </ItemGroup>

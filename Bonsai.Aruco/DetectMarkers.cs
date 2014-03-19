@@ -11,15 +11,15 @@ using System.Reactive.Linq;
 
 namespace Bonsai.Aruco
 {
-    public class MarkerTracker : Transform<IplImage, MarkerFrame>
+    public class DetectMarkers : Transform<IplImage, MarkerFrame>
     {
-        public MarkerTracker()
+        public DetectMarkers()
         {
             Param1 = 7.0;
             Param2 = 7.0;
             MinSize = 0.04f;
             MaxSize = 0.5f;
-            ThresholdType = ThresholdMethod.AdaptiveThreshold;
+            ThresholdMethod = ThresholdMethod.AdaptiveThreshold;
             CornerRefinement = CornerRefinementMethod.Lines;
             MarkerSize = 10;
         }
@@ -28,7 +28,7 @@ namespace Bonsai.Aruco
         [Editor("Bonsai.Design.OpenFileNameEditor, Bonsai.Design", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
         public string CameraParameters { get; set; }
 
-        public ThresholdMethod ThresholdType { get; set; }
+        public ThresholdMethod ThresholdMethod { get; set; }
 
         public double Param1 { get; set; }
 
@@ -65,14 +65,12 @@ namespace Bonsai.Aruco
 
                 return source.Select(input =>
                 {
-                    var threshold = new IplImage(input.Size, IplDepth.U8, 1);
-                    detector.ThresholdMethod = ThresholdType;
+                    detector.ThresholdMethod = ThresholdMethod;
                     detector.Param1 = Param1;
                     detector.Param2 = Param2;
                     detector.MinSize = MinSize;
                     detector.MaxSize = MaxSize;
                     detector.CornerRefinement = CornerRefinement;
-                    detector.CopyThresholdedImage(threshold);
 
                     var detectedMarkers = detector.Detect(input, cameraMatrix, distortion, MarkerSize);
                     return new MarkerFrame(parameters, detectedMarkers);
