@@ -14,8 +14,5 @@
     <releaseNotes>First public prerelease of the ArUco module for Bonsai.</releaseNotes>
     <copyright>Gonçalo Lopes © 2014</copyright>
     <tags>Bonsai ArUco Augmented Reality</tags>
-    <dependencies>
-      <dependency id="Bonsai.Core" version="2.0.0-rc6" />
-    </dependencies>
   </metadata>
 </package>

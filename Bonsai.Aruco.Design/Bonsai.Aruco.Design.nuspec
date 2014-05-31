@@ -15,8 +15,7 @@
     <copyright>Gonçalo Lopes © 2014</copyright>
     <tags>Bonsai ArUco Augmented Reality</tags>
     <dependencies>
-      <dependency id="Bonsai.Aruco" version="2.0.0-beta1" />
-      <dependency id="Bonsai.Design" version="2.0.0-rc3" />
+      <dependency id="Bonsai.Aruco" version="2.0.0-beta2" />
     </dependencies>
   </metadata>
 </package>
