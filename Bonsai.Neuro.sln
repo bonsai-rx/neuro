@@ -1,0 +1,51 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Express 2012 for Windows Desktop
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.Aruco", "Bonsai.Aruco\Bonsai.Aruco.csproj", "{BAB97FC6-D7B8-4E27-9EE2-5399F0CD5D30}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.Aruco.Design", "Bonsai.Aruco.Design\Bonsai.Aruco.Design.csproj", "{2DD91EA2-D3DD-41AC-9815-ADB490919948}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.Ephys", "Bonsai.Ephys\Bonsai.Ephys.csproj", "{82923AED-354B-4CCE-8688-EEB35109BE9E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.Ephys.Design", "Bonsai.Ephys.Design\Bonsai.Ephys.Design.csproj", "{CDBD8512-6876-4F46-941A-F04196F3CFDC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{A0048C6E-E29B-40FE-A3F4-1F6943C71970}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.FlyPad", "Bonsai.FlyPad\Bonsai.FlyPad.csproj", "{F082B5AA-EED5-4A4F-958B-1ACF3E3C0EFC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BAB97FC6-D7B8-4E27-9EE2-5399F0CD5D30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BAB97FC6-D7B8-4E27-9EE2-5399F0CD5D30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BAB97FC6-D7B8-4E27-9EE2-5399F0CD5D30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BAB97FC6-D7B8-4E27-9EE2-5399F0CD5D30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DD91EA2-D3DD-41AC-9815-ADB490919948}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DD91EA2-D3DD-41AC-9815-ADB490919948}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DD91EA2-D3DD-41AC-9815-ADB490919948}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DD91EA2-D3DD-41AC-9815-ADB490919948}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82923AED-354B-4CCE-8688-EEB35109BE9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82923AED-354B-4CCE-8688-EEB35109BE9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82923AED-354B-4CCE-8688-EEB35109BE9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82923AED-354B-4CCE-8688-EEB35109BE9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDBD8512-6876-4F46-941A-F04196F3CFDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDBD8512-6876-4F46-941A-F04196F3CFDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDBD8512-6876-4F46-941A-F04196F3CFDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDBD8512-6876-4F46-941A-F04196F3CFDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F082B5AA-EED5-4A4F-958B-1ACF3E3C0EFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F082B5AA-EED5-4A4F-958B-1ACF3E3C0EFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F082B5AA-EED5-4A4F-958B-1ACF3E3C0EFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F082B5AA-EED5-4A4F-958B-1ACF3E3C0EFC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
