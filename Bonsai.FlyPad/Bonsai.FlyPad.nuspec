@@ -6,9 +6,9 @@
     <title>$title$</title>
     <authors>$author$</authors>
     <owners>$author$</owners>
-    <licenseUrl>https://bitbucket.org/horizongir/bonsai/raw/0391fb050a80c94f8ff45c861678a41ae97ca257/LICENSE</licenseUrl>
-    <projectUrl>https://bitbucket.org/horizongir/bonsai</projectUrl>
-    <iconUrl>https://bitbucket.org/horizongir/bonsai/raw/7aacc64dc4647e57362ab310238591dc197fef0d/Resources/Bonsai.png</iconUrl>
+    <licenseUrl>https://bitbucket.org/horizongir/bonsai.neuro/raw/8997ee636785fb092cd2e2100653c1b395c63c5e/LICENSE</licenseUrl>
+    <projectUrl>https://bitbucket.org/horizongir/bonsai.neuro</projectUrl>
+    <iconUrl>https://bytebucket.org/horizongir/bonsai.neuro/raw/8997ee636785fb092cd2e2100653c1b395c63c5e/Bonsai.FlyPad/flyPAD.png</iconUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes>First public prerelease of flyPAD data acquisition infrastructure for Bonsai.</releaseNotes>
