@@ -19,9 +19,7 @@ namespace Bonsai.FlyPad
         FTDI source = new FTDI();
 
         [TypeConverter(typeof(PortNameConverter))]
-        public string PortName { get; set; }
-
-        public int BaudRate { get; set; }
+        public int LocationId { get; set; }
 
         private static void Write(FTDI source, string command)
         {
@@ -48,7 +46,7 @@ namespace Bonsai.FlyPad
             return Observable.Create<Mat>(observer =>
             {
                 var running = true;
-                var status = source.OpenBySerialNumber(PortName);
+                var status = source.OpenByLocation((uint)LocationId);
                 if (status != FTDI.FT_STATUS.FT_OK)
                 {
                     throw new InvalidOperationException("Unable to open the FTDI device at the specified serial port.");
@@ -101,7 +99,7 @@ namespace Bonsai.FlyPad
             });
         }
 
-        class PortNameConverter : StringConverter
+        class PortNameConverter : Int32Converter
         {
             public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
             {
@@ -110,7 +108,7 @@ namespace Bonsai.FlyPad
 
             public override TypeConverter.StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
             {
-                string[] portNames;
+                int[] portNames;
                 var numberOfDevices = 0u;
                 var source = ((FlyPadSource)context.Instance).source;
                 source.GetNumberOfDevices(ref numberOfDevices);
@@ -118,9 +116,9 @@ namespace Bonsai.FlyPad
                 var status = source.GetDeviceList(deviceList);
                 if (status == FTDI.FT_STATUS.FT_OK)
                 {
-                    portNames = Array.ConvertAll(deviceList, device => device.SerialNumber);
+                    portNames = Array.ConvertAll(deviceList, device => (int)device.LocId);
                 }
-                else portNames = new string[0];
+                else portNames = new int[0];
                 return new StandardValuesCollection(portNames);
             }
         }
