@@ -16,7 +16,6 @@ namespace Bonsai.FlyPad
         const string StopCommand = "S";
         const int ChannelCount = 64;
         const int FrameSize = 640;
-        FTDI source = new FTDI();
 
         [TypeConverter(typeof(PortNameConverter))]
         public int LocationId { get; set; }
@@ -46,6 +45,7 @@ namespace Bonsai.FlyPad
             return Observable.Create<Mat>(observer =>
             {
                 var running = true;
+                var source = new FTDI();
                 var status = source.OpenByLocation((uint)LocationId);
                 if (status != FTDI.FT_STATUS.FT_OK)
                 {
@@ -110,7 +110,7 @@ namespace Bonsai.FlyPad
             {
                 int[] portNames;
                 var numberOfDevices = 0u;
-                var source = ((FlyPadSource)context.Instance).source;
+                var source = new FTDI();
                 source.GetNumberOfDevices(ref numberOfDevices);
                 var deviceList = new FTDI.FT_DEVICE_INFO_NODE[numberOfDevices];
                 var status = source.GetDeviceList(deviceList);
