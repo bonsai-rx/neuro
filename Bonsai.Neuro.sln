@@ -18,6 +18,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{A0048C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.FlyPad", "Bonsai.FlyPad\Bonsai.FlyPad.csproj", "{F082B5AA-EED5-4A4F-958B-1ACF3E3C0EFC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.PhotonCounting", "Bonsai.PhotonCounting\Bonsai.PhotonCounting.csproj", "{286924A0-4D7F-4E5A-ACFC-6A5FF5E52CF6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +46,10 @@ Global
 		{F082B5AA-EED5-4A4F-958B-1ACF3E3C0EFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F082B5AA-EED5-4A4F-958B-1ACF3E3C0EFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F082B5AA-EED5-4A4F-958B-1ACF3E3C0EFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{286924A0-4D7F-4E5A-ACFC-6A5FF5E52CF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{286924A0-4D7F-4E5A-ACFC-6A5FF5E52CF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{286924A0-4D7F-4E5A-ACFC-6A5FF5E52CF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{286924A0-4D7F-4E5A-ACFC-6A5FF5E52CF6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
