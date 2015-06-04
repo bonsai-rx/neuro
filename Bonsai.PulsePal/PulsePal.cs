@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO.Ports;
 using System.Threading;
+using System.IO;
 
 namespace Bonsai.PulsePal
 {
@@ -12,9 +13,11 @@ namespace Bonsai.PulsePal
         public const int BaudRate = 115200;
         const int MaxDataBytes = 35;
 
-        const byte OpMenuCommand      = 0xD5;
+        const byte Acknowledge        = 0x4B;
+        const byte OpMenu             = 0xD5;
         const byte HandshakeCommand   = 0x48;
-        const byte AcknowledgeCommand = 0x4B;
+        const byte PulseTrain1Command = 0x4B;
+        const byte PulseTrain2Command = 0x4C;
         const byte TriggerCommand     = 0x4D;
         const byte SetDisplayCommand  = 0x4E;
         const byte SetVoltageCommand  = 0x4F;
@@ -41,7 +44,7 @@ namespace Bonsai.PulsePal
             serialPort.DtrEnable = false;
             serialPort.RtsEnable = true;
 
-            responseBuffer = new byte[2];
+            responseBuffer = new byte[4];
             commandBuffer = new byte[MaxDataBytes];
             readBuffer = new byte[serialPort.ReadBufferSize];
             serialPort.DataReceived += new SerialDataReceivedEventHandler(serialPort_DataReceived);
@@ -73,14 +76,70 @@ namespace Bonsai.PulsePal
         {
             serialPort.Open();
             serialPort.ReadExisting();
-            commandBuffer[0] = OpMenuCommand;
+            commandBuffer[0] = OpMenu;
             commandBuffer[1] = HandshakeCommand;
             serialPort.Write(commandBuffer, 0, 2);
         }
 
+        void WriteInt(BinaryWriter writer, int value)
+        {
+            writer.Write((byte)value);
+            writer.Write((byte)(value >> 8));
+            writer.Write((byte)(value >> 16));
+            writer.Write((byte)(value >> 24));
+        }
+
+        public void SendCustomPulseTrain(int id, int[] pulseTimes, byte[] pulseVoltages)
+        {
+            if (id < 1 || id > 2)
+            {
+                throw new ArgumentException("Pulse train id must be either 1 or 2.", "id");
+            }
+
+            if (pulseTimes == null)
+            {
+                throw new ArgumentNullException("pulseTimes");
+            }
+
+            if (pulseVoltages == null)
+            {
+                throw new ArgumentNullException("pulseVoltages");
+            }
+
+            var nPulses = pulseTimes.Length;
+            if (nPulses > 1000)
+            {
+                throw new ArgumentException("Exceeded the maximum allowed number of pulses.", "pulseTimes");
+            }
+
+            if (pulseTimes.Length != pulseVoltages.Length)
+            {
+                throw new ArgumentException("Pulse voltages array must be of same length as pulse times.", "pulseVoltages");
+            }
+
+            using (var stream = new MemoryStream())
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write(OpMenu);
+                writer.Write(id == 1 ? PulseTrain1Command : PulseTrain2Command);
+                writer.Write(0);
+                WriteInt(writer, nPulses);
+
+                for (int i = 0; i < pulseTimes.Length; i++)
+                {
+                    WriteInt(writer, pulseTimes[i]);
+                }
+
+                for (int i = 0; i < pulseVoltages.Length; i++)
+                {
+                    writer.Write(pulseVoltages[i]);
+                }
+            }
+        }
+
         public void TriggerOutputChannels(byte channels)
         {
-            commandBuffer[0] = OpMenuCommand;
+            commandBuffer[0] = OpMenu;
             commandBuffer[1] = TriggerCommand;
             commandBuffer[2] = channels;
             serialPort.Write(commandBuffer, 0, 3);
@@ -105,7 +164,7 @@ namespace Bonsai.PulsePal
         public void SetDisplay(string row1, string row2)
         {
             var index = 0;
-            commandBuffer[index++] = OpMenuCommand;
+            commandBuffer[index++] = OpMenu;
             commandBuffer[index++] = SetDisplayCommand;
             index = WriteText(row1, index);
             if (!string.IsNullOrEmpty(row2))
@@ -117,7 +176,7 @@ namespace Bonsai.PulsePal
 
         public void SetFixedVoltage(byte channel, byte voltage)
         {
-            commandBuffer[0] = OpMenuCommand;
+            commandBuffer[0] = OpMenu;
             commandBuffer[1] = SetVoltageCommand;
             commandBuffer[2] = channel;
             commandBuffer[3] = voltage;
@@ -126,14 +185,14 @@ namespace Bonsai.PulsePal
 
         public void AbortPulseTrains()
         {
-            commandBuffer[0] = OpMenuCommand;
+            commandBuffer[0] = OpMenu;
             commandBuffer[1] = AbortCommand;
             serialPort.Write(commandBuffer, 0, 2);
         }
 
         public void SetContinuousLoop(byte channel, bool loop)
         {
-            commandBuffer[0] = OpMenuCommand;
+            commandBuffer[0] = OpMenu;
             commandBuffer[1] = LoopCommand;
             commandBuffer[2] = channel;
             commandBuffer[3] = (byte)(loop ? 1 : 0);
@@ -142,7 +201,7 @@ namespace Bonsai.PulsePal
 
         public void SetClientId(string id)
         {
-            commandBuffer[0] = OpMenuCommand;
+            commandBuffer[0] = OpMenu;
             commandBuffer[1] = ClientIdCommand;
             for (int i = 0; i < 6; i++)
             {
@@ -159,14 +218,14 @@ namespace Bonsai.PulsePal
 
         void ProcessInput(byte inputData)
         {
-            if (!initialized && inputData != AcknowledgeCommand)
+            if (!initialized && inputData != Acknowledge)
             {
                 throw new InvalidOperationException("Unexpected return value from PulsePal.");
             }
 
             switch (inputData)
             {
-                case AcknowledgeCommand:
+                case Acknowledge:
                     initialized = true;
                     break;
                 default:
@@ -191,7 +250,7 @@ namespace Bonsai.PulsePal
             {
                 if (disposing)
                 {
-                    commandBuffer[0] = OpMenuCommand;
+                    commandBuffer[0] = OpMenu;
                     commandBuffer[1] = DisconnectCommand;
                     serialPort.Write(commandBuffer, 0, 2);
                     serialPort.Close();

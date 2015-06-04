@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Bonsai.PulsePal
 {
-    public class Trigger : Sink
+    public class TriggerOutput : Sink
     {
         [Description("The name of the serial port.")]
         [TypeConverter(typeof(SerialPortNameConverter))]
