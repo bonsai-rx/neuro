@@ -134,6 +134,9 @@ namespace Bonsai.PulsePal
                 {
                     writer.Write(pulseVoltages[i]);
                 }
+
+                var command = stream.GetBuffer();
+                serialPort.Write(command, 0, command.Length);
             }
         }
 
