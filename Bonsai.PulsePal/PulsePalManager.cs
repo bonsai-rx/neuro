@@ -28,14 +28,18 @@ namespace Bonsai.PulsePal
                 if (!openConnections.TryGetValue(portName, out connection))
                 {
                     var pulsePal = new PulsePal(portName);
+                    pulsePal.Open();
+                    pulsePal.SetClientId("Bonsai");
                     var configuration = LoadConfiguration();
                     if (configuration.Contains(portName))
                     {
                         var pulsePalConfiguration = configuration[portName];
+                        foreach (var parameter in pulsePalConfiguration.ChannelParameters)
+                        {
+                            pulsePal.ProgramParameter(parameter.Channel, parameter.ParameterCode, parameter.Value);
+                        }
                     }
 
-                    pulsePal.Open();
-                    pulsePal.SetClientId("Bonsai");
                     var dispose = Disposable.Create(() =>
                     {
                         pulsePal.Close();

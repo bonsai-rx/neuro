@@ -13,19 +13,20 @@ namespace Bonsai.PulsePal
         public const int BaudRate = 115200;
         const int MaxDataBytes = 35;
 
-        const byte Acknowledge        = 0x4B;
-        const byte OpMenu             = 0xD5;
-        const byte HandshakeCommand   = 0x48;
-        const byte PulseTrain1Command = 0x4B;
-        const byte PulseTrain2Command = 0x4C;
-        const byte TriggerCommand     = 0x4D;
-        const byte SetDisplayCommand  = 0x4E;
-        const byte SetVoltageCommand  = 0x4F;
-        const byte AbortCommand       = 0x50;
-        const byte DisconnectCommand  = 0x51;
-        const byte LoopCommand        = 0x52;
-        const byte ClientIdCommand    = 0x59;
-        const byte LineBreak          = 0xFE;
+        const byte Acknowledge           = 0x4B;
+        const byte OpMenu                = 0xD5;
+        const byte HandshakeCommand      = 0x48;
+        const byte ProgramParamCommand   = 0x4A;
+        const byte PulseTrain1Command    = 0x4B;
+        const byte PulseTrain2Command    = 0x4C;
+        const byte TriggerCommand        = 0x4D;
+        const byte SetDisplayCommand     = 0x4E;
+        const byte SetVoltageCommand     = 0x4F;
+        const byte AbortCommand          = 0x50;
+        const byte DisconnectCommand     = 0x51;
+        const byte LoopCommand           = 0x52;
+        const byte ClientIdCommand       = 0x59;
+        const byte LineBreak             = 0xFE;
 
         bool disposed;
         bool initialized;
@@ -89,6 +90,26 @@ namespace Bonsai.PulsePal
             writer.Write((byte)(value >> 24));
         }
 
+        public void ProgramParameter(int channel, ParameterCode parameter, int value)
+        {
+            using (var stream = new MemoryStream(commandBuffer))
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write(OpMenu);
+                writer.Write(ProgramParamCommand);
+                writer.Write((byte)parameter);
+                writer.Write((byte)channel);
+                if (parameter >= ParameterCode.Phase1Duration
+                    && parameter < ParameterCode.PulseTrainDelay
+                    || parameter == ParameterCode.RestingVoltage)
+                {
+                    WriteInt(writer, value);
+                }
+                else writer.Write((byte)value);
+                serialPort.Write(commandBuffer, 0, (int)stream.Length);
+            }
+        }
+
         public void SendCustomPulseTrain(int id, int[] pulseTimes, byte[] pulseVoltages)
         {
             if (id < 1 || id > 2)
@@ -122,7 +143,7 @@ namespace Bonsai.PulsePal
             {
                 writer.Write(OpMenu);
                 writer.Write(id == 1 ? PulseTrain1Command : PulseTrain2Command);
-                writer.Write(0);
+                writer.Write((byte)0);
                 WriteInt(writer, nPulses);
 
                 for (int i = 0; i < pulseTimes.Length; i++)
@@ -136,7 +157,7 @@ namespace Bonsai.PulsePal
                 }
 
                 var command = stream.GetBuffer();
-                serialPort.Write(command, 0, command.Length);
+                serialPort.Write(command, 0, (int)stream.Length);
             }
         }
 

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Bonsai - PulsePal Library")]
-[assembly: AssemblyDescription("Bonsai Library containing modules for acquisition of capacitance signals from the flyPAD.")]
+[assembly: AssemblyDescription("Bonsai Library containing modules for interfacing with the PulsePal pulse train generator.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Gonçalo Lopes")]
 [assembly: AssemblyProduct("Bonsai.PulsePal")]
