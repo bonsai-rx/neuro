@@ -12,6 +12,8 @@ namespace Bonsai.PulsePal
 {
     public class UpdatePulseTrain : Sink<Mat>
     {
+        const int CycleTimeMicroseconds = 50;
+
         public UpdatePulseTrain()
         {
             PulseId = 1;
@@ -31,7 +33,7 @@ namespace Bonsai.PulsePal
                 () => PulsePalManager.ReserveConnection(PortName),
                 pulsePal => source.Do(input =>
                 {
-                    var pulseInterval = 1000000 / Frequency;
+                    var pulseInterval = 1000000 / (Frequency * CycleTimeMicroseconds);
                     var pulseTimes = new int[input.Cols];
                     var pulseVoltages = new byte[input.Cols];
                     for (int i = 0; i < pulseTimes.Length; i++)
