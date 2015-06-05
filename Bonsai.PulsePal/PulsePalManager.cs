@@ -9,13 +9,13 @@ using System.Reactive.Disposables;
 
 namespace Bonsai.PulsePal
 {
-    static class PulsePalManager
+    public static class PulsePalManager
     {
         public const string DefaultConfigurationFile = "PulsePal.config";
         static readonly Dictionary<string, Tuple<PulsePal, RefCountDisposable>> openConnections = new Dictionary<string, Tuple<PulsePal, RefCountDisposable>>();
         static readonly object openConnectionsLock = new object();
 
-        public static PulsePalDisposable ReserveConnection(string portName)
+        internal static PulsePalDisposable ReserveConnection(string portName)
         {
             if (string.IsNullOrEmpty(portName))
             {

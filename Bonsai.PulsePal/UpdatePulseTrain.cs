@@ -3,6 +3,7 @@ using OpenCV.Net;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Text;
@@ -20,7 +21,7 @@ namespace Bonsai.PulsePal
         }
 
         [Description("The name of the serial port.")]
-        [TypeConverter(typeof(SerialPortNameConverter))]
+        [Editor("Bonsai.PulsePal.Design.PulsePalConfigurationEditor, Bonsai.PulsePal.Design", typeof(UITypeEditor))]
         public string PortName { get; set; }
 
         public int PulseId { get; set; }
