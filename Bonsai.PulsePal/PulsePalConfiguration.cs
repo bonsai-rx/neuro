@@ -10,7 +10,7 @@ namespace Bonsai.PulsePal
 {
     public class PulsePalConfiguration
     {
-        ChannelParameterCollection channelParameters = new ChannelParameterCollection();
+        readonly ChannelParameterCollection channelParameters = new ChannelParameterCollection();
 
         [Description("The name of the serial port.")]
         [TypeConverter(typeof(SerialPortNameConverter))]
