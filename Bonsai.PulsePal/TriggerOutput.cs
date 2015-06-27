@@ -10,12 +10,14 @@ using System.Threading.Tasks;
 
 namespace Bonsai.PulsePal
 {
+    [Description("Triggers the specified output channels to begin playing their pulse sequences.")]
     public class TriggerOutput : Sink
     {
         [Description("The name of the serial port.")]
         [Editor("Bonsai.PulsePal.Design.PulsePalConfigurationEditor, Bonsai.PulsePal.Design", typeof(UITypeEditor))]
         public string PortName { get; set; }
 
+        [Description("A value representing the bitmask of channels to trigger.")]
         public byte Channels { get; set; }
 
         public override IObservable<TSource> Process<TSource>(IObservable<TSource> source)

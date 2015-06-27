@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace Bonsai.PulsePal
 {
+    [Description("Uploads a custom pulse train to the PulsePal.")]
     public class UpdatePulseTrain : Sink<Mat>
     {
         const int CycleTimeMicroseconds = 50;
@@ -24,8 +25,10 @@ namespace Bonsai.PulsePal
         [Editor("Bonsai.PulsePal.Design.PulsePalConfigurationEditor, Bonsai.PulsePal.Design", typeof(UITypeEditor))]
         public string PortName { get; set; }
 
+        [Description("The identifier of the custom pulse train.")]
         public int PulseId { get; set; }
 
+        [Description("The playback frequency (Hz) used for the custom pulse train.")]
         public int Frequency { get; set; }
 
         public override IObservable<Mat> Process(IObservable<Mat> source)

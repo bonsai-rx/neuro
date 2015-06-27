@@ -16,6 +16,7 @@ namespace Bonsai.PulsePal
         [TypeConverter(typeof(SerialPortNameConverter))]
         public string PortName { get; set; }
 
+        [Description("The collection of parameters used to specify operation of individual channels.")]
         public ChannelParameterCollection ChannelParameters
         {
             get { return channelParameters; }
