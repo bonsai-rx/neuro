@@ -38,7 +38,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Bonsai.Design, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Bonsai.Design.2.1.1\lib\net45\Bonsai.Design.dll</HintPath>
+      <HintPath>..\packages\Bonsai.Design.2.1.2\lib\net45\Bonsai.Design.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Bonsai.System, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
