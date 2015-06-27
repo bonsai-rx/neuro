@@ -19,7 +19,11 @@ namespace Bonsai.PulsePal.Design
             var channelParameter = value as ChannelParameter;
             if (channelParameter != null)
             {
-                return channelParameter.ParameterCode.ToString();
+                return string.Format(
+                    "Ch:{0} {1} = {2}",
+                    channelParameter.Channel,
+                    channelParameter.ParameterCode,
+                    channelParameter.Value);
             }
 
             return base.GetDisplayText(value);
