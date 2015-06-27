@@ -14,6 +14,7 @@
     <copyright>Gonçalo Lopes © 2015</copyright>
     <tags>Bonsai PulsePal Design Pulse Stimulator</tags>
     <dependencies>
+      <dependency id="Bonsai.Design" version="2.1.2" />
       <dependency id="Bonsai.PulsePal" version="0.1.0" />
     </dependencies>
   </metadata>
