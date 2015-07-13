@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.PulsePal", "Bonsai.P
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.PulsePal.Design", "Bonsai.PulsePal.Design\Bonsai.PulsePal.Design.csproj", "{F2E59FA9-35DD-4B09-B2F2-8F9065BA19A6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.ChampalimaudHardware", "Bonsai.ChampalimaudHardware\Bonsai.ChampalimaudHardware.csproj", "{688342E3-F0F3-476C-9F64-CD824817A1FD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +64,10 @@ Global
 		{F2E59FA9-35DD-4B09-B2F2-8F9065BA19A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2E59FA9-35DD-4B09-B2F2-8F9065BA19A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2E59FA9-35DD-4B09-B2F2-8F9065BA19A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{688342E3-F0F3-476C-9F64-CD824817A1FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{688342E3-F0F3-476C-9F64-CD824817A1FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{688342E3-F0F3-476C-9F64-CD824817A1FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{688342E3-F0F3-476C-9F64-CD824817A1FD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
