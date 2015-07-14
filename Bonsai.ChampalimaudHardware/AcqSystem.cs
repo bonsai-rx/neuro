@@ -6,7 +6,6 @@ using OpenCV.Net;
 using System.Reactive.Linq;
 using System.Threading;
 using System.ComponentModel;
-using FTD2XX_NET;
 using System.IO.Ports;
 using Bonsai.IO;
 
@@ -22,6 +21,12 @@ namespace Bonsai.ChampalimaudHardware
         const int ChannelCount = 6;
         const int FrameSize = 15;
 
+        public AcqSystem()
+        {
+            BufferLength = 10;
+            SamplingRate = AcqSystemSamplingRate.SampleRate1000Hz;
+        }
+
         [TypeConverter(typeof(SerialPortNameConverter))]
         public string PortName { get; set; }
 
@@ -33,62 +38,63 @@ namespace Bonsai.ChampalimaudHardware
         {
             return Observable.Create<Mat>(observer =>
             {
-                var running = true;
-                var source = new SerialPort(PortName, BaudRate);
+                var bufferLength = BufferLength;
+                var source = new SerialPort(PortName, BaudRate, Parity.None, 8, StopBits.One);
                 source.RtsEnable = true;
-                source.Open();
 
-                source.Write(string.Format("{0}{1}", StartCommand, (int)SamplingRate));
-                var thread = new Thread(() =>
+                var packetCount = 0;
+                var packetOffset = 0;
+                var channelOffset = 0;
+                var dataFrame = new ushort[ChannelCount, bufferLength];
+                var readBuffer = new byte[source.ReadBufferSize];
+                source.DataReceived += (sender, e) =>
                 {
-                    var packetOffset = 0;
-                    var initialized = false;
-                    var dataFrame = new ushort[ChannelCount, BufferLength];
-                    var packet = new byte[FrameSize * BufferLength];
-                    while (!initialized && running)
+                    switch (e.EventType)
                     {
-                        var value = (byte)source.ReadByte();
-                        initialized = value == SyncByte;
-                        packet[0] = value;
-                        packetOffset = 1;
-                    }
-
-                    while (running)
-                    {
-                        source.Read(packet, packetOffset, packet.Length - packetOffset);
-                        packetOffset = 0;
-
-                        // Check if device data is valid
-                        for (int i = 0; i < BufferLength; i++)
-                        {
-                            if (packet[i * FrameSize] != SyncByte)
+                        case SerialData.Chars:
+                            var bytesToRead = source.BytesToRead;
+                            source.Read(readBuffer, 0, bytesToRead);
+                            for (int i = 0; i < bytesToRead; i++)
                             {
-                                observer.OnError(new InvalidOperationException(string.Format(
-                                    "Received misaligned data packet: unexpected sync byte {0}.",
-                                    packet[i * FrameSize])));
-                            }
-                        }
+                                if (packetOffset == 0 && readBuffer[i] != SyncByte)
+                                {
+                                    observer.OnError(new InvalidOperationException(string.Format(
+                                        "Received misaligned data packet: unexpected sync byte {0}.",
+                                        readBuffer[0])));
+                                }
+                                else if (packetOffset >= ChannelOffset)
+                                {
+                                    if (packetOffset % 2 == 0)
+                                    {
+                                        dataFrame[channelOffset, packetCount] = readBuffer[i];
+                                    }
+                                    else
+                                    {
+                                        dataFrame[channelOffset, packetCount] |= (ushort)(readBuffer[i] << 8);
+                                        channelOffset = (channelOffset + 1) % ChannelCount;
+                                    }
+                                }
 
-                        for (int i = 0; i < ChannelCount; i++)
-                        {
-                            for (int j = 0; j < BufferLength; j++)
-                            {
-                                dataFrame[i, j] = (ushort)((
-                                    (packet[ChannelOffset + i * 2 + j * FrameSize])
-                                    | packet[ChannelOffset + i * 2 + j * FrameSize + 1]) << 8);
+                                packetOffset = (packetOffset + 1) % FrameSize;
+                                if (packetOffset == 0)
+                                {
+                                    packetCount = (packetCount + 1) % bufferLength;
+                                    if (packetCount == 0)
+                                    {
+                                        var dataOutput = Mat.FromArray(dataFrame);
+                                        observer.OnNext(dataOutput);
+                                    }
+                                }
                             }
-                        }
 
-                        var dataOutput = Mat.FromArray(dataFrame);
-                        observer.OnNext(dataOutput);
+                            break;
                     }
-                });
+                };
 
-                thread.Start();
+                source.Open();
+                source.Write(string.Format("{0}{1}", StartCommand, (int)SamplingRate));
                 return () =>
                 {
-                    running = false;
-                    if (thread != Thread.CurrentThread) thread.Join();
                     source.Write(StopCommand);
                     source.Close();
                 };
