@@ -11,13 +11,12 @@ using Bonsai.IO;
 
 namespace Bonsai.ChampalimaudHardware
 {
-    public class AcqSystem : Source<Mat>
+    public class AcqSystem : Source<AcqSystemDataFrame>
     {
         const string StartCommand = "S";
         const string StopCommand = "R";
         const int BaudRate = 115200;
         const byte SyncByte = 0x40;
-        const int ChannelOffset = 2;
         const int ChannelCount = 6;
         const int FrameSize = 15;
 
@@ -34,17 +33,20 @@ namespace Bonsai.ChampalimaudHardware
 
         public int BufferLength { get; set; }
 
-        public override IObservable<Mat> Generate()
+        public override IObservable<AcqSystemDataFrame> Generate()
         {
-            return Observable.Create<Mat>(observer =>
+            return Observable.Create<AcqSystemDataFrame>(observer =>
             {
                 var bufferLength = BufferLength;
                 var source = new SerialPort(PortName, BaudRate, Parity.None, 8, StopBits.One);
                 source.RtsEnable = true;
 
+                var ready = false;
+                var checksum = 0;
                 var packetCount = 0;
                 var packetOffset = 0;
                 var channelOffset = 0;
+                var timestamp = new byte[bufferLength];
                 var dataFrame = new ushort[ChannelCount, bufferLength];
                 var readBuffer = new byte[source.ReadBufferSize];
                 source.DataReceived += (sender, e) =>
@@ -52,17 +54,35 @@ namespace Bonsai.ChampalimaudHardware
                     switch (e.EventType)
                     {
                         case SerialData.Chars:
-                            var bytesToRead = source.BytesToRead;
-                            source.Read(readBuffer, 0, bytesToRead);
-                            for (int i = 0; i < bytesToRead; i++)
+                            var bytesRead = source.Read(readBuffer, 0, readBuffer.Length);
+                            for (int i = 0; i < bytesRead; i++)
                             {
-                                if (packetOffset == 0 && readBuffer[i] != SyncByte)
+                                if (!ready)
                                 {
-                                    observer.OnError(new InvalidOperationException(string.Format(
-                                        "Received misaligned data packet: unexpected sync byte {0}.",
-                                        readBuffer[0])));
+                                    ready = readBuffer[i] == SyncByte;
+                                    packetOffset = 0;
                                 }
-                                else if (packetOffset >= ChannelOffset)
+                                else if (packetOffset == 0)
+                                {
+                                    if (ready = readBuffer[i] == SyncByte)
+                                    {
+                                        packetCount = (packetCount + 1) % bufferLength;
+                                        if (packetCount == 0)
+                                        {
+                                            var dataOutput = new AcqSystemDataFrame(timestamp, dataFrame);
+                                            observer.OnNext(dataOutput);
+                                        }
+                                    }
+                                }
+                                else if (packetOffset == 1)
+                                {
+                                    timestamp[packetCount] = readBuffer[i];
+                                }
+                                else if (packetOffset == 14)
+                                {
+                                    checksum = readBuffer[i];
+                                }
+                                else
                                 {
                                     if (packetOffset % 2 == 0)
                                     {
@@ -76,15 +96,6 @@ namespace Bonsai.ChampalimaudHardware
                                 }
 
                                 packetOffset = (packetOffset + 1) % FrameSize;
-                                if (packetOffset == 0)
-                                {
-                                    packetCount = (packetCount + 1) % bufferLength;
-                                    if (packetCount == 0)
-                                    {
-                                        var dataOutput = Mat.FromArray(dataFrame);
-                                        observer.OnNext(dataOutput);
-                                    }
-                                }
                             }
 
                             break;
