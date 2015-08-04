@@ -54,48 +54,55 @@ namespace Bonsai.ChampalimaudHardware
                     switch (e.EventType)
                     {
                         case SerialData.Chars:
-                            var bytesRead = source.Read(readBuffer, 0, readBuffer.Length);
-                            for (int i = 0; i < bytesRead; i++)
+                            try
                             {
-                                if (!ready)
+                                var bytesRead = source.Read(readBuffer, 0, readBuffer.Length);
+                                for (int i = 0; i < bytesRead; i++)
                                 {
-                                    ready = readBuffer[i] == SyncByte;
-                                    packetOffset = 0;
-                                }
-                                else if (packetOffset == 0)
-                                {
-                                    if (ready = readBuffer[i] == SyncByte)
+                                    if (!ready)
                                     {
-                                        packetCount = (packetCount + 1) % bufferLength;
-                                        if (packetCount == 0)
+                                        ready = readBuffer[i] == SyncByte;
+                                        packetOffset = 0;
+                                    }
+                                    else if (packetOffset == 0)
+                                    {
+                                        if (ready = readBuffer[i] == SyncByte)
                                         {
-                                            var dataOutput = new AcqSystemDataFrame(timestamp, dataFrame);
-                                            observer.OnNext(dataOutput);
+                                            packetCount = (packetCount + 1) % bufferLength;
+                                            if (packetCount == 0)
+                                            {
+                                                var dataOutput = new AcqSystemDataFrame(timestamp, dataFrame);
+                                                observer.OnNext(dataOutput);
+                                            }
                                         }
                                     }
-                                }
-                                else if (packetOffset == 1)
-                                {
-                                    timestamp[packetCount] = readBuffer[i];
-                                }
-                                else if (packetOffset == 14)
-                                {
-                                    checksum = readBuffer[i];
-                                }
-                                else
-                                {
-                                    if (packetOffset % 2 == 0)
+                                    else if (packetOffset == 1)
                                     {
-                                        dataFrame[channelOffset, packetCount] = readBuffer[i];
+                                        timestamp[packetCount] = readBuffer[i];
+                                    }
+                                    else if (packetOffset == 14)
+                                    {
+                                        checksum = readBuffer[i];
                                     }
                                     else
                                     {
-                                        dataFrame[channelOffset, packetCount] |= (ushort)(readBuffer[i] << 8);
-                                        channelOffset = (channelOffset + 1) % ChannelCount;
+                                        if (packetOffset % 2 == 0)
+                                        {
+                                            dataFrame[channelOffset, packetCount] = readBuffer[i];
+                                        }
+                                        else
+                                        {
+                                            dataFrame[channelOffset, packetCount] |= (ushort)(readBuffer[i] << 8);
+                                            channelOffset = (channelOffset + 1) % ChannelCount;
+                                        }
                                     }
-                                }
 
-                                packetOffset = (packetOffset + 1) % FrameSize;
+                                    packetOffset = (packetOffset + 1) % FrameSize;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                observer.OnError(ex);
                             }
 
                             break;
