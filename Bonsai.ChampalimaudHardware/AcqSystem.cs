@@ -87,6 +87,7 @@ namespace Bonsai.ChampalimaudHardware
                                     else if (packetOffset == 14)
                                     {
                                         checksum = readBuffer[i];
+                                        packetSum -= checksum;
                                     }
                                     else
                                     {
