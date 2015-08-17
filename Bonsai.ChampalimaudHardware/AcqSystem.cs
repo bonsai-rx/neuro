@@ -43,6 +43,7 @@ namespace Bonsai.ChampalimaudHardware
 
                 var ready = false;
                 var checksum = 0;
+                var packetSum = 0;
                 var packetCount = 0;
                 var packetOffset = 0;
                 var channelOffset = 0;
@@ -59,15 +60,18 @@ namespace Bonsai.ChampalimaudHardware
                                 var bytesRead = source.Read(readBuffer, 0, readBuffer.Length);
                                 for (int i = 0; i < bytesRead; i++)
                                 {
+                                    packetSum += readBuffer[i];
                                     if (!ready)
                                     {
                                         ready = readBuffer[i] == SyncByte;
                                         packetOffset = 0;
+                                        packetSum = 0;
                                     }
                                     else if (packetOffset == 0)
                                     {
-                                        if (ready = readBuffer[i] == SyncByte)
+                                        if (ready = readBuffer[i] == SyncByte && checksum == (packetSum & 255))
                                         {
+                                            packetSum = 0;
                                             packetCount = (packetCount + 1) % bufferLength;
                                             if (packetCount == 0)
                                             {
