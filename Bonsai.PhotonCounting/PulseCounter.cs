@@ -11,23 +11,29 @@ using System.Threading;
 
 namespace Bonsai.PhotonCounting
 {
+    [Description("Produces a sequence of photon counts from the C8855 Hamamatsu counting unit.")]
     public class PulseCounter : Source<Mat>
     {
         public PulseCounter()
         {
             NumberOfGates = 1;
             GateTime = GateTime.GateTime1MS;
-            TransferMode = TransferMode.BlockTransfer;
+            TransferMode = TransferMode.SingleTransfer;
         }
 
+        [Description("Specifies the gate integration time.")]
         public GateTime GateTime { get; set; }
 
+        [Description("Specifies the counter data transfer mode. Should be single transfer if the data is less than 1024.")]
         public TransferMode TransferMode { get; set; }
 
+        [Description("Specifies the number of counter gates to acquire signals.")]
         public int NumberOfGates { get; set; }
 
+        [Description("Specifies the trigger mode.")]
         public TriggerMode TriggerMode { get; set; }
 
+        [Description("Specifies whether the PMT unit should be powered on.")]
         public bool PowerPmt { get; set; }
 
         public override IObservable<Mat> Generate()
