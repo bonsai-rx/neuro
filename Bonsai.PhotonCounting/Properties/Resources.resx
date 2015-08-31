@@ -120,4 +120,13 @@
   <data name="InvalidHandleException" xml:space="preserve">
     <value>Unable to open a connection to the C8855 device. Make sure the device driver has been successfully installed.</value>
   </data>
+  <data name="ResetException" xml:space="preserve">
+    <value>Unable to reset the C8855 device.</value>
+  </data>
+  <data name="SetPmtPowerException" xml:space="preserve">
+    <value>Unable to set the power state on the C8855 device.</value>
+  </data>
+  <data name="SetupException" xml:space="preserve">
+    <value>Unable to configure the C8855 device. Make sure all the parameters are valid.</value>
+  </data>
 </root>
