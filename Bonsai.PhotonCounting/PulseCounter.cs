@@ -18,7 +18,7 @@ namespace Bonsai.PhotonCounting
         {
             NumberOfGates = 1;
             GateTime = GateTime.GateTime1MS;
-            TransferMode = TransferMode.SingleTransfer;
+            TransferMode = TransferMode.BlockTransfer;
         }
 
         [Description("Specifies the gate integration time.")]
