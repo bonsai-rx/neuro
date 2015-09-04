@@ -12,22 +12,20 @@ using System.Threading;
 namespace Bonsai.PhotonCounting
 {
     [Description("Produces a sequence of photon counts from the C8855 Hamamatsu counting unit.")]
-    public class PulseCounter : Source<Mat>
+    public class PulseCounter : Source<int>
     {
         public PulseCounter()
         {
             NumberOfGates = 1;
             GateTime = GateTime.GateTime1MS;
-            TransferMode = TransferMode.BlockTransfer;
         }
 
         [Description("Specifies the gate integration time.")]
         public GateTime GateTime { get; set; }
 
-        [Description("Specifies the counter data transfer mode. Should be single transfer if the data is less than 1024.")]
-        public TransferMode TransferMode { get; set; }
-
+        [Range(2, 1024)]
         [Description("Specifies the number of counter gates to acquire signals.")]
+        [Editor(DesignTypes.NumericUpDownEditor, "System.Drawing.Design.UITypeEditor, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
         public int NumberOfGates { get; set; }
 
         [Description("Specifies the trigger mode.")]
@@ -36,11 +34,15 @@ namespace Bonsai.PhotonCounting
         [Description("Specifies whether the PMT unit should be powered on.")]
         public bool PowerPmt { get; set; }
 
-        public override IObservable<Mat> Generate()
+        [Description("Specifies whether the specified number of measurements should be repeated indefinitely.")]
+        public bool ContinuousAcquisition { get; set; }
+
+        public override IObservable<int> Generate()
         {
-            return Observable.Create<Mat>(observer =>
+            return Observable.Create<int>(observer =>
             {
                 var running = true;
+                var powerPmt = PowerPmt;
                 var thread = new Thread(() =>
                 {
                     var handle = new IntPtr(-1);
@@ -58,7 +60,6 @@ namespace Bonsai.PhotonCounting
                             throw new InvalidOperationException(Resources.ResetException);
                         }
 
-                        var powerPmt = PowerPmt;
                         if (powerPmt)
                         {
                             result = NativeMethods.C8855SetPmtPower(handle, PowerStatus.PmtPowerOn);
@@ -68,40 +69,65 @@ namespace Bonsai.PhotonCounting
                             }
                         }
 
-                        while (running)
+                        do
                         {
-                            var transferMode = TransferMode;
                             var numberOfGates = NumberOfGates;
-                            var bufferSize = transferMode == TransferMode.SingleTransfer ? numberOfGates : numberOfGates * 1024;
-                            result = NativeMethods.C8855Setup(handle, GateTime, transferMode, (ushort)numberOfGates);
+                            result = NativeMethods.C8855Setup(handle, GateTime, TransferMode.SingleTransfer, (ushort)numberOfGates);
                             if (!result)
                             {
                                 throw new InvalidOperationException(Resources.SetupException);
                             }
 
-                            byte datareturn;
-                            int[] buffer = new int[bufferSize];
+                            byte dataReturn;
                             result = NativeMethods.C8855CountStart(handle, TriggerMode);
-                            result = NativeMethods.C8855ReadData(handle, buffer, out datareturn);
-                            result = NativeMethods.C8855CountStop(handle);
-                            observer.OnNext(Mat.FromArray(buffer));
-                        }
+                            if (!result)
+                            {
+                                throw new InvalidOperationException(Resources.CountStartException);
+                            }
 
+                            var buffer = new int[1];
+                            var gateCount = NumberOfGates;
+                            while (gateCount > 0 && running)
+                            {
+                                result = NativeMethods.C8855ReadData(handle, buffer, out dataReturn);
+                                if (!result)
+                                {
+                                    throw new InvalidOperationException(Resources.ReadDataException);
+                                }
+
+                                observer.OnNext(buffer[0]);
+                                gateCount--;
+                            }
+
+                            result = NativeMethods.C8855CountStop(handle);
+                            if (!result)
+                            {
+                                throw new InvalidOperationException(Resources.CountStopException);
+                            }
+                        }
+                        while (ContinuousAcquisition && running);
+
+                        observer.OnCompleted();
+                    }
+                    catch (Exception ex) { observer.OnError(ex); }
+                    finally
+                    {
                         if (powerPmt)
                         {
-                            result = NativeMethods.C8855SetPmtPower(handle, PowerStatus.PmtPowerOff);
+                            var result = NativeMethods.C8855SetPmtPower(handle, PowerStatus.PmtPowerOff);
                             if (!result)
                             {
                                 throw new InvalidOperationException(Resources.SetPmtPowerException);
                             }
                         }
-                    }
-                    catch (Exception ex) { observer.OnError(ex); }
-                    finally
-                    {
+
                         if (handle.ToInt64() > 0)
                         {
-                            NativeMethods.C8855Close(handle);
+                            var result = NativeMethods.C8855Close(handle);
+                            if (!result)
+                            {
+                                throw new InvalidOperationException(Resources.CloseException);
+                            }
                         }
                     }
                 });

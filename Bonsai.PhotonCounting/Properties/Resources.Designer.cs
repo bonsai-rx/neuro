@@ -61,11 +61,56 @@ namespace Bonsai.PhotonCounting.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to close the connection to the C8855 device..
+        /// </summary>
+        internal static string CloseException {
+            get {
+                return ResourceManager.GetString("CloseException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to start counting with the C8855 device..
+        /// </summary>
+        internal static string CountStartException {
+            get {
+                return ResourceManager.GetString("CountStartException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to stop counting with the C8855 device..
+        /// </summary>
+        internal static string CountStopException {
+            get {
+                return ResourceManager.GetString("CountStopException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There was an error in the block transfer of data from the C8855 device..
+        /// </summary>
+        internal static string ErrorTransferException {
+            get {
+                return ResourceManager.GetString("ErrorTransferException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to open a connection to the C8855 device. Make sure the device driver has been successfully installed..
         /// </summary>
         internal static string InvalidHandleException {
             get {
                 return ResourceManager.GetString("InvalidHandleException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to read data from the C8855 device..
+        /// </summary>
+        internal static string ReadDataException {
+            get {
+                return ResourceManager.GetString("ReadDataException", resourceCulture);
             }
         }
         

@@ -117,8 +117,23 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CloseException" xml:space="preserve">
+    <value>Unable to close the connection to the C8855 device.</value>
+  </data>
+  <data name="CountStartException" xml:space="preserve">
+    <value>Unable to start counting with the C8855 device.</value>
+  </data>
+  <data name="CountStopException" xml:space="preserve">
+    <value>Unable to stop counting with the C8855 device.</value>
+  </data>
+  <data name="ErrorTransferException" xml:space="preserve">
+    <value>There was an error in the block transfer of data from the C8855 device.</value>
+  </data>
   <data name="InvalidHandleException" xml:space="preserve">
     <value>Unable to open a connection to the C8855 device. Make sure the device driver has been successfully installed.</value>
+  </data>
+  <data name="ReadDataException" xml:space="preserve">
+    <value>Unable to read data from the C8855 device.</value>
   </data>
   <data name="ResetException" xml:space="preserve">
     <value>Unable to reset the C8855 device.</value>
