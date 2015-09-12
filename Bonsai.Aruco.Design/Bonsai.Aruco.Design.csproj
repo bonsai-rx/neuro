@@ -104,6 +104,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DetectMarkersVisualizer.cs" />
+    <Compile Include="MarkerMashupVisualizer.cs" />
+    <Compile Include="MarkerVisualizer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.Generated.cs" />
   </ItemGroup>
