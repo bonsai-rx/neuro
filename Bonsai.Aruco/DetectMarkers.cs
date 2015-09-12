@@ -8,6 +8,7 @@ using Aruco.Net;
 using System.ComponentModel;
 using System.Xml.Serialization;
 using System.Reactive.Linq;
+using System.IO;
 
 namespace Bonsai.Aruco
 {
@@ -24,7 +25,7 @@ namespace Bonsai.Aruco
             MarkerSize = 10;
         }
 
-        [FileNameFilter("YML Files|*.yml;*.xml")]
+        [FileNameFilter("Camera Files|*.yml;*.xml|YAML Files|*.yml|XML Files|*.xml")]
         [Editor("Bonsai.Design.OpenFileNameEditor, Bonsai.Design", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
         public string CameraParameters { get; set; }
 
@@ -50,18 +51,19 @@ namespace Bonsai.Aruco
                 Mat distortion = null;
                 CameraParameters parameters = null;
                 var detector = new MarkerDetector();
-                if (string.IsNullOrEmpty(CameraParameters))
-                {
-                    throw new InvalidOperationException("No camera configuration file was specified.");
-                }
-
-                parameters = new CameraParameters();
-                parameters.ReadFromXmlFile(CameraParameters);
 
                 Size size;
                 cameraMatrix = new Mat(3, 3, Depth.F32, 1);
                 distortion = new Mat(1, 4, Depth.F32, 1);
-                parameters.CopyParameters(cameraMatrix, distortion, out size);
+                var parametersFileName = CameraParameters;
+                if (!string.IsNullOrEmpty(parametersFileName))
+                {
+                    parameters = new CameraParameters();
+                    var extension = Path.GetExtension(parametersFileName);
+                    if (extension == ".xml") parameters.ReadFromXmlFile(parametersFileName);
+                    else parameters.ReadFromFile(parametersFileName);
+                    parameters.CopyParameters(cameraMatrix, distortion, out size);
+                }
 
                 return source.Select(input =>
                 {

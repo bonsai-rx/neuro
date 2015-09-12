@@ -11,11 +11,10 @@
     <iconUrl>https://bitbucket.org/horizongir/bonsai/raw/7aacc64dc4647e57362ab310238591dc197fef0d/Resources/Bonsai.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>First public prerelease of the ArUco module for Bonsai.</releaseNotes>
-    <copyright>Gonçalo Lopes © 2014</copyright>
+    <copyright>Gonçalo Lopes © 2015</copyright>
     <tags>Bonsai ArUco Augmented Reality</tags>
     <dependencies>
-      <dependency id="Bonsai.Aruco" version="2.0.0-ctp1" />
+      <dependency id="Bonsai.Aruco" version="2.1.0" />
     </dependencies>
   </metadata>
 </package>
