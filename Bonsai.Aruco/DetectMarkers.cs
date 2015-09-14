@@ -26,21 +26,29 @@ namespace Bonsai.Aruco
         }
 
         [FileNameFilter("YAML Files (*.yml)|*.yml|All Files (*.*)|*.*")]
+        [Description("The name of the YAML file storing the camera calibration parameters.")]
         [Editor("Bonsai.Design.OpenFileNameEditor, Bonsai.Design", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
         public string CameraParameters { get; set; }
 
+        [Description("The threshold method used for marker detection.")]
         public ThresholdMethod ThresholdMethod { get; set; }
 
+        [Description("The first parameter of the threshold method.")]
         public double Param1 { get; set; }
 
+        [Description("The second parameter of the threshold method.")]
         public double Param2 { get; set; }
 
+        [Description("The minimum marker size as a fraction of the image size.")]
         public float MinSize { get; set; }
 
+        [Description("The maximum marker size as a fraction of the image size.")]
         public float MaxSize { get; set; }
 
+        [Description("The method used to refine marker corners.")]
         public CornerRefinementMethod CornerRefinement { get; set; }
 
+        [Description("The size of the marker sides, in meters.")]
         public float MarkerSize { get; set; }
 
         public override IObservable<MarkerFrame> Process(IObservable<IplImage> source)
