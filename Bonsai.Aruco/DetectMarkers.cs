@@ -12,6 +12,7 @@ using System.IO;
 
 namespace Bonsai.Aruco
 {
+    [Description("Detects planar fiducial markers in the input image sequence.")]
     public class DetectMarkers : Transform<IplImage, MarkerFrame>
     {
         public DetectMarkers()
