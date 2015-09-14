@@ -25,7 +25,7 @@ namespace Bonsai.Aruco
             MarkerSize = 10;
         }
 
-        [FileNameFilter("Camera Files|*.yml;*.xml|YAML Files|*.yml|XML Files|*.xml")]
+        [FileNameFilter("YAML Files (*.yml)|*.yml|All Files (*.*)|*.*")]
         [Editor("Bonsai.Design.OpenFileNameEditor, Bonsai.Design", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
         public string CameraParameters { get; set; }
 
@@ -59,9 +59,7 @@ namespace Bonsai.Aruco
                 if (!string.IsNullOrEmpty(parametersFileName))
                 {
                     parameters = new CameraParameters();
-                    var extension = Path.GetExtension(parametersFileName);
-                    if (extension == ".xml") parameters.ReadFromXmlFile(parametersFileName);
-                    else parameters.ReadFromFile(parametersFileName);
+                    parameters.ReadFromXmlFile(parametersFileName);
                     parameters.CopyParameters(cameraMatrix, distortion, out size);
                 }
 
