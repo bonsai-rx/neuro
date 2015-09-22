@@ -83,7 +83,7 @@ namespace Bonsai.Aruco
 
                     var detectedMarkers = detector.Detect(input, cameraMatrix, distortion, MarkerSize);
                     return new MarkerFrame(parameters, detectedMarkers);
-                }).Finally(detector.Dispose);
+                });
             });
         }
     }
