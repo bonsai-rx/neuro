@@ -67,6 +67,11 @@ namespace Bonsai.Aruco
                 var parametersFileName = CameraParameters;
                 if (!string.IsNullOrEmpty(parametersFileName))
                 {
+                    if (!File.Exists(parametersFileName))
+                    {
+                        throw new InvalidOperationException("Failed to open the camera parameters at the specified path.");
+                    }
+
                     parameters = new CameraParameters();
                     parameters.ReadFromXmlFile(parametersFileName);
                     parameters.CopyParameters(cameraMatrix, distortion, out size);
