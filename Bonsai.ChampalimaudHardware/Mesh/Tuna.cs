@@ -6,7 +6,7 @@ using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bonsai.ChampalimaudHardware
+namespace Bonsai.ChampalimaudHardware.Mesh
 {
     public class Tuna : Source<TunaDataFrame>
     {

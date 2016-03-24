@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Bonsai.ChampalimaudHardware
+namespace Bonsai.ChampalimaudHardware.Mesh
 {
     class TunaTransport : IDisposable
     {

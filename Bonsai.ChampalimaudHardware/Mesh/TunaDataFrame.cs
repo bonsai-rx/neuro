@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bonsai.ChampalimaudHardware
+namespace Bonsai.ChampalimaudHardware.Mesh
 {
     public class TunaDataFrame
     {
