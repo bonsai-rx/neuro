@@ -71,9 +71,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AcqSystem.cs" />
-    <Compile Include="AcqSystemDataFrame.cs" />
-    <Compile Include="AcqSystemSamplingRate.cs" />
+    <Compile Include="AcqSystem\AcquisitionBoard.cs" />
+    <Compile Include="AcqSystem\AnalogData.cs" />
+    <Compile Include="AcqSystem\DataFrame.cs" />
+    <Compile Include="AcqSystem\MotionSensorData.cs" />
+    <Compile Include="AcqSystem\SamplingRate.cs" />
+    <Compile Include="AcqSystem\AnalogFrame.cs" />
+    <Compile Include="AcqSystem\DigitalFrame.cs" />
+    <Compile Include="AcqSystem\DataFrameType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.Generated.cs" />
     <Compile Include="Mesh\Tuna.cs" />
@@ -87,6 +92,11 @@
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <StartAction>Program</StartAction>
+    <StartProgram>$(registry:HKEY_CURRENT_USER\Software\Goncalo Lopes\Bonsai@InstallDir)Bonsai.exe</StartProgram>
+    <StartArguments>--lib:"$(TargetDir)."</StartArguments>
+  </PropertyGroup>
   <Import Project="$(MSBuildProjectDirectory)\..\MSBuild\AssemblyInfo.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

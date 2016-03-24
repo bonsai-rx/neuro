@@ -1,0 +1,52 @@
+﻿using OpenCV.Net;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reactive.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Bonsai.ChampalimaudHardware.AcqSystem
+{
+    public class AnalogData : Transform<DataFrame, Mat>
+    {
+        public AnalogData()
+        {
+            BufferLength = 10;
+        }
+
+        public int BufferLength { get; set; }
+
+        public override IObservable<Mat> Process(IObservable<DataFrame> source)
+        {
+            return Process(source.Select(frame => frame as AnalogFrame).Where(frame => frame != null));
+        }
+
+        public IObservable<Mat> Process(IObservable<AnalogFrame> source)
+        {
+            return Observable.Defer(() =>
+            {
+                var packetCount = 0;
+                var bufferLength = BufferLength;
+                if (bufferLength <= 0)
+                {
+                    throw new InvalidOperationException("The buffer length must be greater than zero.");
+                }
+
+                var buffer = default(ushort[]);
+                return source.Select(frame =>
+                {
+                    var data = frame.Data;
+                    if (buffer == null) buffer = new ushort[data.Length * bufferLength];
+                    for (int i = 0; i < data.Length; i++)
+                    {
+                        buffer[i * bufferLength + packetCount] = data[i];
+                    }
+                    return (packetCount = (packetCount + 1) % bufferLength) == 0 ? data.Length : 0;
+                })
+                .Where(rows => rows > 0)
+                .Select(rows => Mat.FromArray(buffer, rows, bufferLength, Depth.U16, 1));
+            });
+        }
+    }
+}

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bonsai.ChampalimaudHardware
+namespace Bonsai.ChampalimaudHardware.AcqSystem
 {
-    public enum AcqSystemSamplingRate
+    public enum SamplingRate
     {
         SampleRate1Hz = 0,
         SampleRate1000Hz = 1,
