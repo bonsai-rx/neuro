@@ -10,6 +10,12 @@ namespace Bonsai.ChampalimaudHardware.Mesh
 {
     public class Tuna : Source<TunaDataFrame>
     {
+        public Tuna()
+        {
+            Port = 51002;
+            TunaPort = 51003;
+        }
+
         public int Port { get; set; }
 
         public int TunaPort { get; set; }
