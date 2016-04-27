@@ -79,6 +79,12 @@
     <Compile Include="AcqSystem\AnalogFrame.cs" />
     <Compile Include="AcqSystem\DigitalFrame.cs" />
     <Compile Include="AcqSystem\DataFrameType.cs" />
+    <Compile Include="Harp\CircularPort.cs" />
+    <Compile Include="Harp\HarpDataFrame.cs" />
+    <Compile Include="Harp\MessageId.cs" />
+    <Compile Include="Harp\PortNameConverter.cs" />
+    <Compile Include="Harp\ReceiveMessage.cs" />
+    <Compile Include="Harp\SerialTransport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.Generated.cs" />
     <Compile Include="Mesh\Tuna.cs" />
@@ -91,6 +97,7 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <StartAction>Program</StartAction>
