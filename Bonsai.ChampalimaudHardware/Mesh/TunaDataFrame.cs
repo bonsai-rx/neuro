@@ -39,6 +39,7 @@ namespace Bonsai.ChampalimaudHardware.Mesh
             Id = messageId & IdMask;
 
             Message = message;
+            Counter = message[7];
             Second = message[3] | message[4] << 8 | message[5] << 16 | message[6] << 24;
             using (var dataHeader = Mat.CreateMatHeader(message, 1, message.Length / 2, Depth.S16, 1))
             {
@@ -60,6 +61,8 @@ namespace Bonsai.ChampalimaudHardware.Mesh
         public bool Error { get; set; }
 
         public long Second { get; private set; }
+
+        public byte Counter { get; set; }
 
         public Mat Data { get; private set; }
 
