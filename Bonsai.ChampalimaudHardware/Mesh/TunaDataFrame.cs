@@ -19,7 +19,7 @@ namespace Bonsai.ChampalimaudHardware.Mesh
         const int ErrorFlag = 0x1000;
         const int IdMask = 0x0FFF;
 
-        internal TunaDataFrame(byte[] message)
+        public TunaDataFrame(byte[] message)
         {
             if (message == null)
             {
