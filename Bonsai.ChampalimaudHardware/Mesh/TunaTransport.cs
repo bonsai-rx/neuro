@@ -31,14 +31,16 @@ namespace Bonsai.ChampalimaudHardware.Mesh
                     {
                         try
                         {
+                            TunaDataFrame data;
                             var endPoint = new IPEndPoint(IPAddress.Any, 0);
                             var message = client.Receive(ref endPoint);
                             endPoint.Port = tunaPort;
-                            var data = new TunaDataFrame(message);
                             if (message[0] == DataAndConf)
                             {
+                                data = new TunaConfigurationFrame(message);
                                 client.Send(KeepAlive, KeepAlive.Length, endPoint);
                             }
+                            else data = new TunaDataFrame(message);
                             observer.OnNext(data);
                             recurse();
                         }
