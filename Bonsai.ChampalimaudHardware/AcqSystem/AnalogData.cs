@@ -37,15 +37,16 @@ namespace Bonsai.ChampalimaudHardware.AcqSystem
                 return source.Select(frame =>
                 {
                     var data = frame.Data;
-                    if (buffer == null) buffer = new ushort[data.Length * bufferLength];
+                    if (buffer == null) buffer = new ushort[(data.Length + 1) * bufferLength];
                     for (int i = 0; i < data.Length; i++)
                     {
-                        buffer[i * bufferLength + packetCount] = data[i];
+                        buffer[(i + 1) * bufferLength + packetCount] = data[i];
                     }
+                    buffer[packetCount] = frame.Counter;
                     return (packetCount = (packetCount + 1) % bufferLength) == 0 ? data.Length : 0;
                 })
                 .Where(rows => rows > 0)
-                .Select(rows => Mat.FromArray(buffer, rows, bufferLength, Depth.U16, 1));
+                .Select(rows => Mat.FromArray(buffer, rows + 1, bufferLength, Depth.U16, 1));
             });
         }
     }
