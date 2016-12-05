@@ -37,6 +37,12 @@ namespace Bonsai.ChampalimaudHardware.Harp
             serialPort.Open();
         }
 
+        public void Write(HarpDataFrame input)
+        {
+            serialPort.Write(input.Message, 0, input.Message.Length);
+        }
+
+
         void serialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             var bytesToRead = serialPort.BytesToRead;
