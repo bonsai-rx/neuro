@@ -76,7 +76,7 @@ namespace Bonsai.ChampalimaudHardware.AcqSystem
             return Observable.Create<DataFrame>(observer =>
             {
                 var source = new SerialPort(PortName, BaudRate, Parity.None, 8, StopBits.One);
-                source.RtsEnable = true;
+                source.Handshake = Handshake.RequestToSend;
 
                 var checksum = 0;
                 var packetSum = 0;

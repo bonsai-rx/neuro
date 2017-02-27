@@ -36,7 +36,7 @@ namespace Bonsai.ChampalimaudHardware.AcqSystem
             {
                 var bufferLength = BufferLength;
                 var source = new SerialPort(PortName, BaudRate, Parity.None, 8, StopBits.One);
-                source.RtsEnable = true;
+                source.Handshake = Handshake.RequestToSend;
                 var readBuffer = new byte[source.ReadBufferSize];
                 source.DataReceived += (sender, e) =>
                 {
