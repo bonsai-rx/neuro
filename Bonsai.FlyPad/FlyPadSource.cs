@@ -7,6 +7,7 @@ using System.Reactive.Linq;
 using System.Threading;
 using System.ComponentModel;
 using FTD2XX_NET;
+using System.Threading.Tasks;
 
 namespace Bonsai.FlyPad
 {
@@ -42,28 +43,27 @@ namespace Bonsai.FlyPad
 
         public override IObservable<Mat> Generate()
         {
-            return Observable.Create<Mat>(observer =>
+            return Observable.Create<Mat>((observer, cancellationToken) =>
             {
-                var running = true;
-                var source = new FTDI();
-                var status = source.OpenByLocation((uint)LocationId);
-                if (status != FTDI.FT_STATUS.FT_OK)
+                return Task.Factory.StartNew(() =>
                 {
-                    throw new InvalidOperationException("Unable to open the FTDI device at the specified serial port.");
-                }
+                    var source = new FTDI();
+                    var status = source.OpenByLocation((uint)LocationId);
+                    if (status != FTDI.FT_STATUS.FT_OK)
+                    {
+                        throw new InvalidOperationException("Unable to open the FTDI device at the specified serial port.");
+                    }
 
-                status = source.SetTimeouts(5000, 1000);
-                if (status != FTDI.FT_STATUS.FT_OK)
-                {
-                    throw new InvalidOperationException("Unable to set timeouts on the FTDI device.");
-                }
+                    status = source.SetTimeouts(5000, 1000);
+                    if (status != FTDI.FT_STATUS.FT_OK)
+                    {
+                        throw new InvalidOperationException("Unable to set timeouts on the FTDI device.");
+                    }
 
-                Write(source, StartCommand);
-                var thread = new Thread(() =>
-                {
+                    Write(source, StartCommand);
                     var dataFrame = new short[ChannelCount, 1];
                     var packet = new byte[FrameSize];
-                    while (running)
+                    while (!cancellationToken.IsCancellationRequested)
                     {
                         Read(source, packet);
                         for (int i = 0; i < packet.Length; i += 20)
@@ -86,16 +86,13 @@ namespace Bonsai.FlyPad
                         var dataOutput = Mat.FromArray(dataFrame);
                         observer.OnNext(dataOutput);
                     }
-                });
 
-                thread.Start();
-                return () =>
-                {
-                    running = false;
-                    if (thread != Thread.CurrentThread) thread.Join();
                     Write(source, StopCommand);
                     source.Close();
-                };
+                },
+                cancellationToken,
+                TaskCreationOptions.LongRunning,
+                TaskScheduler.Default);
             });
         }
 
