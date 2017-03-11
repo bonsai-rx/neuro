@@ -15,8 +15,8 @@ namespace Bonsai.FlyPad
     {
         const string StartCommand = "G";
         const string StopCommand = "S";
-        const int ChannelCount = 64;
-        const int FrameSize = 640;
+        internal const int ChannelCount = 64;
+        internal const int FrameSize = 640;
 
         [TypeConverter(typeof(PortNameConverter))]
         public int LocationId { get; set; }
@@ -94,30 +94,6 @@ namespace Bonsai.FlyPad
                 TaskCreationOptions.LongRunning,
                 TaskScheduler.Default);
             });
-        }
-
-        class PortNameConverter : Int32Converter
-        {
-            public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
-            {
-                return true;
-            }
-
-            public override TypeConverter.StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
-            {
-                int[] portNames;
-                var numberOfDevices = 0u;
-                var source = new FTDI();
-                source.GetNumberOfDevices(ref numberOfDevices);
-                var deviceList = new FTDI.FT_DEVICE_INFO_NODE[numberOfDevices];
-                var status = source.GetDeviceList(deviceList);
-                if (status == FTDI.FT_STATUS.FT_OK)
-                {
-                    portNames = Array.ConvertAll(deviceList, device => (int)device.LocId);
-                }
-                else portNames = new int[0];
-                return new StandardValuesCollection(portNames);
-            }
         }
     }
 }
