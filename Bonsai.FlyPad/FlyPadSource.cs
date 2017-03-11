@@ -54,7 +54,7 @@ namespace Bonsai.FlyPad
                         throw new InvalidOperationException("Unable to open the FTDI device at the specified serial port.");
                     }
 
-                    status = source.SetTimeouts(5000, 1000);
+                    status = source.SetTimeouts(100, 100);
                     if (status != FTDI.FT_STATUS.FT_OK)
                     {
                         throw new InvalidOperationException("Unable to set timeouts on the FTDI device.");
