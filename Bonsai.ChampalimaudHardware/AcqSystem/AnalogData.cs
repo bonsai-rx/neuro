@@ -58,10 +58,10 @@ namespace Bonsai.ChampalimaudHardware.AcqSystem
                     {
                         buffer[j + packetCount] = (ushort)(frame.Counter + j);
                     }
-                    return (packetCount = (packetCount + 1) % bufferLength) == 0 ? rows : 0;
+                    return (packetCount = (packetCount + columns) % bufferSamples) == 0 ? rows : 0;
                 })
                 .Where(rows => rows > 0)
-                .Select(rows => Mat.FromArray(buffer, rows, bufferLength, Depth.U16, 1));
+                .Select(rows => Mat.FromArray(buffer, rows, buffer.Length / rows, Depth.U16, 1));
             });
         }
     }
