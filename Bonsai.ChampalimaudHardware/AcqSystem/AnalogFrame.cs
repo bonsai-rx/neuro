@@ -10,6 +10,11 @@ namespace Bonsai.ChampalimaudHardware.AcqSystem
     public class AnalogFrame : DataFrame
     {
         public ushort Counter;
-        public readonly ushort[] Data = new ushort[6];
+        public readonly ushort[,] Data;
+
+        public AnalogFrame(int rows, int cols)
+        {
+            Data = new ushort[rows, cols];
+        }
     }
 }

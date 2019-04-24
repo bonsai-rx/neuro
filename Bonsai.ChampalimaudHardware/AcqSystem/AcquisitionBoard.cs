@@ -13,17 +13,17 @@ namespace Bonsai.ChampalimaudHardware.AcqSystem
 {
     public class AcquisitionBoard : Source<DataFrame>
     {
-        const string StartCommand = "S";
         const string StopCommand = "R";
         const int DefaultBaudRate = 115200;
-        const int ChannelCount = 6;
+        const int SamplesPerFrame = 6;
         const int AuxiliaryDataSize = 20;
-        const int AmplifierFrameSize = 2 * ChannelCount + 4;
+        const int AmplifierFrameSize = 2 * SamplesPerFrame + 4;
         const int AuxiliaryFrameSize = AuxiliaryDataSize + 5;
 
         public AcquisitionBoard()
         {
             SamplingRate = SamplingRate.SampleRate1000Hz;
+            ChannelCount = ChannelCount.Six;
             BaudRate = DefaultBaudRate;
         }
 
@@ -32,19 +32,33 @@ namespace Bonsai.ChampalimaudHardware.AcqSystem
 
         public SamplingRate SamplingRate { get; set; }
 
+        public ChannelCount ChannelCount { get; set; }
+
         [TypeConverter(typeof(BaudRateConverter))]
         public int BaudRate { get; set; }
 
-        static DataFrame CreateDataFrame(byte syncByte, out AnalogFrame analogFrame, out DigitalFrame digitalFrame)
+        static int GetChannelCount(ChannelCount channelCount)
+        {
+            switch (channelCount)
+            {
+                case ChannelCount.One: return 1;
+                case ChannelCount.Two: return 2;
+                case ChannelCount.Three: return 3;
+                case ChannelCount.Six: return 6;
+                default: throw new InvalidOperationException("Invalid channel count");
+            }
+        }
+
+        static DataFrame CreateDataFrame(byte syncByte, int rows, out AnalogFrame analogFrame, out DigitalFrame digitalFrame)
         {
             switch (syncByte)
             {
                 case 0x40:
                     digitalFrame = null;
-                    return analogFrame = new AnalogFrame { Type = DataFrameType.Analog };
+                    return analogFrame = new AnalogFrame(rows, SamplesPerFrame / rows) { Type = DataFrameType.Analog };
                 case 0x2A:
                     digitalFrame = null;
-                    return analogFrame = new AnalogFrame { Type = DataFrameType.Trigger };
+                    return analogFrame = new AnalogFrame(rows, SamplesPerFrame / rows) { Type = DataFrameType.Trigger };
                 case 0x3F:
                     analogFrame = null;
                     return digitalFrame = new DigitalFrame { Type = DataFrameType.Digital };
@@ -87,6 +101,8 @@ namespace Bonsai.ChampalimaudHardware.AcqSystem
                 var digitalFrame = default(DigitalFrame);
                 var frameSize = GetFrameSize(dataFrame);
                 var readBuffer = new byte[source.ReadBufferSize];
+                var rows = GetChannelCount(ChannelCount);
+                var columns = SamplesPerFrame / rows;
                 source.DataReceived += (sender, e) =>
                 {
                     switch (e.EventType)
@@ -100,7 +116,7 @@ namespace Bonsai.ChampalimaudHardware.AcqSystem
                                     packetSum += readBuffer[i];
                                     if (dataFrame == null)
                                     {
-                                        dataFrame = CreateDataFrame(readBuffer[i], out analogFrame, out digitalFrame);
+                                        dataFrame = CreateDataFrame(readBuffer[i], rows, out analogFrame, out digitalFrame);
                                         frameSize = GetFrameSize(dataFrame);
                                         packetOffset = 0;
                                     }
@@ -127,12 +143,12 @@ namespace Bonsai.ChampalimaudHardware.AcqSystem
                                         {
                                             if (packetOffset % 2 != 0)
                                             {
-                                                analogFrame.Data[payloadOffset] = readBuffer[i];
+                                                analogFrame.Data[payloadOffset / columns, payloadOffset % columns] = readBuffer[i];
                                             }
                                             else
                                             {
-                                                analogFrame.Data[payloadOffset] |= (ushort)(readBuffer[i] << 8);
-                                                payloadOffset = (payloadOffset + 1) % ChannelCount;
+                                                analogFrame.Data[payloadOffset / columns, payloadOffset % columns] |= (ushort)(readBuffer[i] << 8);
+                                                payloadOffset = (payloadOffset + 1) % SamplesPerFrame;
                                             }
                                         }
                                     }
@@ -162,7 +178,7 @@ namespace Bonsai.ChampalimaudHardware.AcqSystem
                 };
 
                 source.Open();
-                source.Write(string.Format("{0}{1}", StartCommand, (int)SamplingRate));
+                source.Write(string.Format("{0}{1}", Convert.ToChar((int)ChannelCount), (int)SamplingRate));
                 return () =>
                 {
                     source.Write(StopCommand);

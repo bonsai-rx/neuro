@@ -71,6 +71,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AcqSystem\ChannelCount.cs" />
     <Compile Include="AcqSystem\RawStream.cs" />
     <Compile Include="AcqSystem\AcquisitionBoard.cs" />
     <Compile Include="AcqSystem\AnalogData.cs" />
