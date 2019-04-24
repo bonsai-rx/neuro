@@ -178,7 +178,8 @@ namespace Bonsai.ChampalimaudHardware.AcqSystem
                 };
 
                 source.Open();
-                source.Write(string.Format("{0}{1}", Convert.ToChar((int)ChannelCount), (int)SamplingRate));
+                var startCommand = string.Format("{0}{1}", Convert.ToChar((int)ChannelCount), (int)SamplingRate);
+                source.Write(startCommand);
                 return () =>
                 {
                     source.Write(StopCommand);
