@@ -143,11 +143,11 @@ namespace Bonsai.ChampalimaudHardware.AcqSystem
                                         {
                                             if (packetOffset % 2 != 0)
                                             {
-                                                analogFrame.Data[payloadOffset / columns, payloadOffset % columns] = readBuffer[i];
+                                                analogFrame.Data[payloadOffset % rows, payloadOffset / rows] = readBuffer[i];
                                             }
                                             else
                                             {
-                                                analogFrame.Data[payloadOffset / columns, payloadOffset % columns] |= (ushort)(readBuffer[i] << 8);
+                                                analogFrame.Data[payloadOffset % rows, payloadOffset / rows] |= (ushort)(readBuffer[i] << 8);
                                                 payloadOffset = (payloadOffset + 1) % SamplesPerFrame;
                                             }
                                         }
