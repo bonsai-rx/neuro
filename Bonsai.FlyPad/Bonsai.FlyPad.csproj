@@ -69,7 +69,6 @@
     <Compile Include="FlyPadSource.cs" />
     <Compile Include="PortNameConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\AssemblyInfo.Generated.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Bonsai.FlyPad.nuspec">
@@ -83,7 +82,6 @@
     <StartProgram>$(registry:HKEY_CURRENT_USER\Software\Goncalo Lopes\Bonsai@InstallDir)Bonsai.exe</StartProgram>
     <StartArguments>--lib:"$(TargetDir)."</StartArguments>
   </PropertyGroup>
-  <Import Project="$(MSBuildProjectDirectory)\..\MSBuild\AssemblyInfo.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
