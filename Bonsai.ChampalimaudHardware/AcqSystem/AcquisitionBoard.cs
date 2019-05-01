@@ -14,17 +14,16 @@ namespace Bonsai.ChampalimaudHardware.AcqSystem
     public class AcquisitionBoard : Source<DataFrame>
     {
         const string StopCommand = "R";
-        const int DefaultBaudRate = 115200;
         const int SamplesPerFrame = 6;
         const int AuxiliaryDataSize = 20;
         const int AmplifierFrameSize = 2 * SamplesPerFrame + 4;
         const int AuxiliaryFrameSize = AuxiliaryDataSize + 5;
+        const int BaudRate = 2000000;
 
         public AcquisitionBoard()
         {
             SamplingRate = SamplingRate.SampleRate1000Hz;
             ChannelCount = ChannelCount.Six;
-            BaudRate = DefaultBaudRate;
         }
 
         [TypeConverter(typeof(SerialPortNameConverter))]
@@ -33,9 +32,6 @@ namespace Bonsai.ChampalimaudHardware.AcqSystem
         public SamplingRate SamplingRate { get; set; }
 
         public ChannelCount ChannelCount { get; set; }
-
-        [TypeConverter(typeof(BaudRateConverter))]
-        public int BaudRate { get; set; }
 
         static int GetChannelCount(ChannelCount channelCount)
         {
