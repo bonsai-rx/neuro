@@ -1,0 +1,63 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dotnet/docfx/main/schemas/docfx.schema.json",
+  "build": {
+    "content": [
+      {
+        "files": [
+          "*.md",
+          "toc.yml",
+          "{articles,tutorials,examples}/**/*.md",
+          "{articles,tutorials,examples}/**/toc.yml"
+        ],
+        "exclude": "README.md"
+      }
+    ],
+    "resource": [
+      {
+        "files": [
+          "images/**",
+          "workflows/**/*.{bonsai,svg}",
+          "{articles,tutorials,examples}/**/*.{bonsai,svg}"
+        ]
+      }
+    ],
+    "overwrite": [
+      "apidoc/**/*.md"
+    ],
+    "output": "artifacts/site",
+    "template": [
+      "default",
+      "modern",
+      "bonsai-docfx/template",
+      "template"
+    ],
+    "sitemap": {
+      "baseUrl": "https://neuro.bonsai-rx.org"
+    },
+    "globalMetadata": {
+      "_appName": "Bonsai for Neuroscientists",
+      "_appTitle": "Bonsai for Neuroscientists",
+      "_appFooter": "&copy; Bonsai Foundation CIC and Contributors. Made with <a href=\"https://dotnet.github.io/docfx\">docfx</a>",
+      "_appLogoPath": "logo.svg",
+      "_appFaviconPath": "favicon.ico",
+      "_enableNewTab": true,
+      "_enableSearch": true,
+      "_gitContribute": {
+        "apiSpecFolder": "docs/apidoc"
+      }
+    },
+    "fileMetadata": {
+      "_appTitle": { "index.md": "" }
+    },
+    "markdownEngineProperties": {
+      "markdigExtensions": [
+        "attributes",
+        "customcontainers"
+      ]
+    },
+    "xref": [
+      "https://bonsai-rx.org/docs/xrefmap.yml",
+      "https://horizongir.github.io/reactive/xrefmap.yml"
+    ]
+  }
+}
